@@ -1,6 +1,6 @@
 <h1 align="center">Codenity - leetcode</h1>
 
-You can create a folder with your name and the solution to the problem and send a pullrequest to main
+You can create a folder with your name and the solution to the problem and send a pull request to main from your branch
 
 
 # Problem 1
