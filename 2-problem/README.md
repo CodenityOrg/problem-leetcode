@@ -11,6 +11,11 @@ Te embarcas en tu propio viaje a través de múltiples dimensiones. Cada dimensi
 * Visualización de Dimensiones: Permite a los usuarios ver una lista de dimensiones exploradas, cada una con su propia descripción, características únicas, y tal vez un indicador de peligro.
 * Funciones CRUD: Implementa funciones para agregar nuevas dimensiones, ver detalles de las dimensiones existentes, editar sus características, y eliminarlas de tu base de datos interdimensional.
 
+#### colores
+ * ![#1B2A49](https://via.placeholder.com/15/1B2A49/000000.png) #1B2A49
+ * ![#FDEA69](https://via.placeholder.com/15/FDEA69/000000.png) #FDEA69
+ * ![#97CE4C](https://via.placeholder.com/15/97CE4C/000000.png) #97CE4C
+
 # Problema Backend
 El objetivo es crear una aplicación web para gestionar todas tus exploraciones interdimensionales.
 ### Requisitos
