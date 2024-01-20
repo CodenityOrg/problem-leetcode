@@ -1,0 +1,18 @@
+services:
+  backend:
+    container_name: ${CONTAINER_NAME}_backend
+    image: ${IMAGE_DEV}
+    working_dir: /app
+    command: "npm run build:watch"
+    networks: 
+      - laboratorio-local
+    volumes:
+      - ./app:/app
+      - $HOME/.aws:/home/node/.aws
+    environment:
+      - AWS_SDK_LOAD_CONFIG=1
+    stdin_open: true
+
+networks:
+  laboratorio-local:
+    name: laboratorio-local
