@@ -1,27 +1,52 @@
+terraform {
+  required_version = ">= 1.0.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.20.0"
+    }
+  }
+}
 #configura la region a desplegar
 provider "aws" {
   region = var.region
 }
 
+
 # subir y desplegar
 resource "aws_lambda_function" "create" {
   function_name = var.function_name
-  filename = "app.zip"
-  source_code_hash = filebase64sha256("app.zip")
+  s3_bucket        = "bucket-${var.env}-${var.function_name}-01"  # Nombre del bucket de S3
+  s3_key           = "app.zip"     # Ruta en el bucket al archivo ZIP
+  source_code_hash = filebase64sha256("../../app.zip")
   runtime = "nodejs16.x"
-  handler = "functions/create-dimention/handler.main"
+  handler = "src/functions/create-dimention/handler.main"
   role = aws_iam_role.iam_for_lambda.arn
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
-  name = "iam-${var.env}-${var.project}-${var.function_name}-01"
-
+  name = "rol-${var.env}-${var.project}-${var.function_name}-01"
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement":[
-        {
-        "Effect": "Allow"
-        "Action": [
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+resource "aws_iam_policy" "main_policy" {
+  name = "policy-${var.env}-${var.project}-${var.function_name}-01"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
           "dynamodb:Query",
@@ -30,37 +55,25 @@ resource "aws_iam_role" "iam_for_lambda" {
           "kms:Encrypt",
           "secretsmanager:GetSecretValue"
         ],
-        "Resource": [
-          "*"
-        ]
+        Resource = "*"
       },
       {
-        "Action": [
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeVpcs"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "*"
-        ]
-      },
-      {
-        "Action" : [
+        Effect = "Allow",
+        Action = [
           "logs:CreateLogStream",
           "logs:DescribeLogStreams",
           "logs:CreateLogGroup",
           "logs:PutLogEvents"
         ],
-        "Resource" : [
-          "*"
-        ],
-        "Effect" : "Allow"
+        Resource = "*"
       },
     ]
   })
 }
-
+resource "aws_iam_role_policy_attachment" "main_role_policy_attachment" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.main_policy.arn
+}
 #comenzamos con la configuracion para el gateway
 resource "aws_api_gateway_rest_api" "gateway_main" {
   name = "gtw-${var.env}-${var.project}-${var.function_name}"
@@ -70,8 +83,8 @@ resource "aws_api_gateway_rest_api" "gateway_main" {
 # se crea el recurso
 resource "aws_api_gateway_resource" "gateway_resource" {
   rest_api_id = aws_api_gateway_rest_api.gateway_main.id
-  parent_id = aws_api_gateway_rest_api.gateway_main.id
-  path_part = "/" 
+  parent_id = aws_api_gateway_rest_api.gateway_main.root_resource_id
+  path_part = "dimention" 
 }
 
 # Crear un método HTTP GET para el recurso
