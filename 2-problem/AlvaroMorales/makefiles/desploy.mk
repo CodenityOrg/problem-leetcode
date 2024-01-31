@@ -8,6 +8,7 @@ deploy:
 	cd ..
 	mkdir -p app/build
 	cp -R app/dist/* app/build
+	cp -R node_modules app/build
 	ls -al app/build
 	cd app/build && zip -rq ../../app.zip *
 	# Copiar el archivo al bucket
