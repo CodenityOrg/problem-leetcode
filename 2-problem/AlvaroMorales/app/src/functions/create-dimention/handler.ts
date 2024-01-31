@@ -10,7 +10,12 @@ export class CreateHandler{
         @inject(TYPES.DimentionService) private readonly dimentionService:DimentionService,
     ){}
     async main(event:DimentionRequest) {
-        await this.dimentionService.createDimention(event);
+       try {
+            const dimentionSave = await this.dimentionService.createDimention(event);
+            return(dimentionSave)
+       } catch (error) {
+        console.log("ERROR----->",JSON.stringify(error));
+       }
     }
 }
 

@@ -11,7 +11,7 @@ export class DimentionService{
     ){}
     async createDimention(dimention:DimentionRequest){
         const buildDimentionSave = this.buildDimention(dimention); 
-        await this.dimentionRepository.createDimention(buildDimentionSave);
+         return await this.dimentionRepository.createDimention(buildDimentionSave);
     }
 
     private buildDimention(event:DimentionRequest):Dimention{
