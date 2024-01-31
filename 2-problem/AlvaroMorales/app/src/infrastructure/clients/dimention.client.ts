@@ -5,7 +5,12 @@ import { Dimention } from "../models/dimention";
 export class DynDimentionClient implements DimentionRepository{
     constructor(){}
     async createDimention(dimention: Dimention): Promise<void> {
-        console.log("Hola CREATEDIMENTION");
+        try {
+            
+        } catch (error) {
+            console.log("ERROR--->",JSON.stringify(error));
+        }
+        console.log("Hola CREATEDIMENTION",JSON.stringify(dimention));
     }
     async getDimention(source: string): Promise<Dimention> {
         throw new Error("Method not implemented.");

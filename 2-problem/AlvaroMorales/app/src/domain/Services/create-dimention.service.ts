@@ -1,14 +1,29 @@
 import { inject, injectable } from "inversify";
+import { v4 as uuidv4 } from "uuid";
 import { TYPES } from "../../common/types";
 import { DimentionRepository } from "../repositories/dimention.repository";
-import { Dimention } from "../../infrastructure/models/dimention";
+import { Dimention, DimentionRequest } from "../../infrastructure/models/dimention";
 
 @injectable()
 export class DimentionService{
     constructor(
         @inject(TYPES.DynDimentionClient) private readonly dimentionRepository:DimentionRepository,
     ){}
-    async createDimention(dimention:Dimention){
-        await this.dimentionRepository.createDimention(dimention);
+    async createDimention(dimention:DimentionRequest){
+        const buildDimentionSave = this.buildDimention(dimention); 
+        await this.dimentionRepository.createDimention(buildDimentionSave);
+    }
+
+    private buildDimention(event:DimentionRequest):Dimention{
+        const newDimention:Dimention = {
+            source: uuidv4(),
+            name: event.name,
+            description: event.description,
+            nivelDanger: event.nivelDanger,
+            data: {
+                
+            }
+        }
+        return newDimention;
     }
 }
