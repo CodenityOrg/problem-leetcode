@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { initContainer } from "../../common/conatiner";
 import { TYPES } from "../../common/types";
 import { DimentionService } from "../../domain/Services/create-dimention.service";
-import { DimentionRequest } from "src/infrastructure/models/dimention";
+import { DimentionRequest } from "../../infrastructure/models/dimention";
 
 @injectable()
 export class CreateHandler{

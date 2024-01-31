@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { DimentionRepository } from "../../domain/repositories/dimention.repository";
 import { Dimention } from "../models/dimention";
-import { TYPES } from "src/common/types";
+import { TYPES } from "../../common/types";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 @injectable()
 export class DynDimentionClient implements DimentionRepository{
