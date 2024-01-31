@@ -11,6 +11,7 @@ export class DynDimentionClient implements DimentionRepository{
     ){}
     async createDimention(dimention: Dimention): Promise<Dimention> {
         try {
+            console.log("this.dynTableDimentions->",this.dynTableDimentions);
             await this.dynamoDBDocumentClient.send(
                 new PutCommand({
                     TableName: this.dynTableDimentions,
