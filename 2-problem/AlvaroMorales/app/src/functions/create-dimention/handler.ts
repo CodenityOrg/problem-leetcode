@@ -31,4 +31,3 @@ const dimention ={
     description:"esto es una descripcion dimention 3",
     nivelDanger:"facil",
 }
-main(dimention).catch(err => console.error(err));

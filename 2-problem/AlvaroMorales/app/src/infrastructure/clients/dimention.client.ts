@@ -3,6 +3,7 @@ import { DimentionRepository } from "../../domain/repositories/dimention.reposit
 import { Dimention } from "../models/dimention";
 import { TYPES } from "../../common/types";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { marshall } from "@aws-sdk/util-dynamodb";
 @injectable()
 export class DynDimentionClient implements DimentionRepository{
     constructor(
@@ -10,17 +11,20 @@ export class DynDimentionClient implements DimentionRepository{
         @inject(TYPES.DynTableDimetions) public dynTableDimentions:string
     ){}
     async createDimention(dimention: Dimention): Promise<Dimention> {
+        console.log("dimention->",dimention);
         try {
+            const marshalledDimention = marshall(dimention);
+            console.log("marshalledDimention->",marshalledDimention);
             console.log("this.dynTableDimentions->",this.dynTableDimentions);
             await this.dynamoDBDocumentClient.send(
                 new PutCommand({
                     TableName: this.dynTableDimentions,
-                    Item: dimention,
+                    Item: dimention
                 })
             )
             return dimention;
         } catch (error) {
-            console.log("ERROR--->",JSON.stringify(error));
+            console.log("ERROR--->",error);
             throw new Error("error CreateDimention");
         }
         console.log("Hola CREATEDIMENTION",JSON.stringify(dimention));

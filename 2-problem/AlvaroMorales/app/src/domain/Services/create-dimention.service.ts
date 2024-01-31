@@ -16,13 +16,13 @@ export class DimentionService{
 
     private buildDimention(event:DimentionRequest):Dimention{
         const newDimention:Dimention = {
-            source: uuidv4(),
+            source: `${uuidv4()}`,
             name: event.name,
             description: event.description,
-            nivelDanger: event.nivelDanger,
-            data: {
-                
-            }
+            nivelDanger: event.nivelDanger
+            // data: {
+            //     default:"example"
+            // }
         }
         return newDimention;
     }

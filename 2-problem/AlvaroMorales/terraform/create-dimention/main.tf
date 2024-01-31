@@ -15,8 +15,8 @@ provider "aws" {
 
 # subir y desplegar
 resource "aws_lambda_function" "create" {
-  function_name = var.function_name
-  s3_bucket        = "bucket-${var.env}-${var.function_name}-01"  # Nombre del bucket de S3
+  function_name = "${var.project}-${var.function_name}"
+  s3_bucket        = "bucket-${var.env}-dimention-app-01"  # Nombre del bucket de S3
   s3_key           = "app.zip"     # Ruta en el bucket al archivo ZIP
   source_code_hash = filebase64sha256("../../app.zip")
   runtime = "nodejs16.x"

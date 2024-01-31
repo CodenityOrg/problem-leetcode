@@ -20,7 +20,7 @@ variable "timeout" {
 
 variable "function_name" {
   type = string
-  default = "dimention-app"
+  default = "dimention-create-app"
 }
 
 variable "project" {
@@ -33,10 +33,6 @@ variable "owner" {
   default = "application"
 }
 
-variable "function" {
-  type    = string
-  default = "lambda-function"
-}
 variable "service_version" {
   type    = string
   default = "1.0.0"
