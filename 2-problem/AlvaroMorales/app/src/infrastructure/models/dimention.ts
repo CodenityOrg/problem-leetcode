@@ -10,3 +10,6 @@ export type DimentionRequest = {
     description:string,
     nivelDanger:string
 }
+export type GetDimentionRequest = {
+    id_dimention:string
+}

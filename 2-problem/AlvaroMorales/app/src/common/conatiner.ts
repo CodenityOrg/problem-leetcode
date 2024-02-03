@@ -8,6 +8,7 @@ import { DynDimentionClient } from "../infrastructure/clients/dimention.client";
 import { CreateHandler } from "../functions/create-dimention/handler";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { GetHandler } from "../functions/get-dimention/handler";
 
 const initContainer = () => {
     const client = new DynamoDBClient({});
@@ -17,6 +18,7 @@ const initContainer = () => {
     container.bind<DynamoDBDocumentClient>(TYPES.DynamoDBDocumentClient).toConstantValue(docClient);
     container.bind<string>(TYPES.DynTableDimetions).toConstantValue(process.env.DYN_CODENITY_DIMENTION as string);
     container.bind<CreateHandler>(TYPES.CreateHandler).to(CreateHandler);
+    container.bind<GetHandler>(TYPES.GetHandler).to(GetHandler);
     container.bind<DimentionService>(TYPES.DimentionService).to(DimentionService);
     container.bind<DimentionRepository>(TYPES.DynDimentionClient).to(DynDimentionClient)
     return container;

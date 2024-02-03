@@ -2,27 +2,27 @@ import { inject, injectable } from "inversify";
 import { initContainer } from "../../common/conatiner";
 import { TYPES } from "../../common/types";
 import { DimentionService } from "../../domain/Services/create-dimention.service";
-import { Dimention, DimentionRequest } from "../../infrastructure/models/dimention";
+import { GetDimentionRequest } from "../../infrastructure/models/dimention";
 
 @injectable()
-export class CreateHandler{
+export class GetHandler{
     constructor(
         @inject(TYPES.DimentionService) private readonly dimentionService:DimentionService,
     ){}
-    async main(event:DimentionRequest) {
+    async main(event:GetDimentionRequest) {
         console.log("event---->",event);
        try {
-            const dimentionSave = await this.dimentionService.createDimention(event);
-            console.log("dimentionSave-->",dimentionSave);
-            return dimentionSave
+            return await this.dimentionService.getDimention(event.id_dimention);
+            //console.log("dimentionGet-->",dimentionSave);
+            //return dimentionSave
        } catch (error) {
         console.log("ERROR----->",error);
        }
     }
 }
 
-export const main = async(event:DimentionRequest)=>{
+export const main = async(event:GetDimentionRequest)=>{
     const container = initContainer();
-    const createHandler = container.get<CreateHandler>(TYPES.CreateHandler);
-    return await createHandler.main(event);
+    const getHandler = container.get<GetHandler>(TYPES.GetHandler);
+    return await getHandler.main(event);
 }

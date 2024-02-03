@@ -13,6 +13,6 @@ deploy:
 	cd app/build && zip -rq ../../app.zip *
 	# Copiar el archivo al bucket
 	aws s3 cp "${FILE_NAME}" "s3://${S3_BUCKET}/";
-	cd terraform/create-dimention && terraform apply
+	cd terraform && terraform init && terraform apply
 	cd .. && cd ..
 	rm app.zip
