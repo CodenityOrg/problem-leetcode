@@ -6,4 +6,5 @@ export const TYPES = {
     CreateHandler : Symbol("CreateHandler"),
     GetHandler : Symbol("GetHandler"),
     DeleteHandler: Symbol("DeleteHandler"),
+    UpdateHandler: Symbol("UpdateHandler"),
 }

@@ -3,7 +3,7 @@ export type Dimention = {
     name:string,
     description:string,
     nivelDanger:string
-    // data:{}
+    data?:{}
 }
 export type DimentionRequest = {
     name:string,
@@ -15,4 +15,12 @@ export type GetDimentionRequest = {
 }
 export type DeleteDimentionRequest = {
     id_dimention:string
+}
+export type UpdateDimentionRequest = {
+    name:string,
+    description:string,
+    nivelDanger:string,
+    data?:{},
+    source?:string
+
 }

@@ -10,6 +10,7 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetHandler } from "../functions/get-dimention/handler";
 import { DeleteHandler } from "../functions/delete-dimention/handler";
+import { UpdateHandler } from "../functions/update-dimention/handler";
 
 const initContainer = () => {
     const client = new DynamoDBClient({});
@@ -21,6 +22,7 @@ const initContainer = () => {
     container.bind<CreateHandler>(TYPES.CreateHandler).to(CreateHandler);
     container.bind<GetHandler>(TYPES.GetHandler).to(GetHandler);
     container.bind<DeleteHandler>(TYPES.DeleteHandler).to(DeleteHandler);
+    container.bind<UpdateHandler>(TYPES.UpdateHandler).to(UpdateHandler);
     container.bind<DimentionService>(TYPES.DimentionService).to(DimentionService);
     container.bind<DimentionRepository>(TYPES.DynDimentionClient).to(DynDimentionClient)
     return container;
