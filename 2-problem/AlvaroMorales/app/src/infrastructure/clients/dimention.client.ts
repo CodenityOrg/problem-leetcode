@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { DimentionRepository } from "../../domain/repositories/dimention.repository";
 import { Dimention } from "../models/dimention";
 import { TYPES } from "../../common/types";
-import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
 @injectable()
 export class DynDimentionClient implements DimentionRepository{
@@ -48,7 +48,19 @@ export class DynDimentionClient implements DimentionRepository{
         throw new Error("Method not implemented.");
     }
     async deleteDimention(source: string): Promise<void> {
-        throw new Error("Method not implemented.");
+        try {
+            const deleteDimention = await this.dynamoDBDocumentClient.send(
+                new DeleteCommand({
+                    TableName: this.dynTableDimentions,
+                    Key: {
+                        source: source,
+                      }
+                })
+            )
+            console.log("deleteDimention------>",deleteDimention);
+        } catch (error) {
+            console.log("ERROR----->",error);
+        }
     }
 
 }

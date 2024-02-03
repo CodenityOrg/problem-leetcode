@@ -16,6 +16,9 @@ export class DimentionService{
     async getDimention(source:string){
         return await this.dimentionRepository.getDimention(source);
     }
+    async deleteDimention (source:string){
+        return await this.dimentionRepository.deleteDimention(source);
+    }
 
     private buildDimention(event:DimentionRequest):Dimention{
         const newDimention:Dimention = {

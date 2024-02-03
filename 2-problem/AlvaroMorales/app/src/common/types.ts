@@ -5,4 +5,5 @@ export const TYPES = {
     DynDimentionClient: Symbol("DynDimentionClient"),
     CreateHandler : Symbol("CreateHandler"),
     GetHandler : Symbol("GetHandler"),
+    DeleteHandler: Symbol("DeleteHandler"),
 }

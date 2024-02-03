@@ -13,3 +13,6 @@ export type DimentionRequest = {
 export type GetDimentionRequest = {
     id_dimention:string
 }
+export type DeleteDimentionRequest = {
+    id_dimention:string
+}

@@ -38,3 +38,10 @@ module "module_get" {
   aws_api_gateway_rest_api_root= aws_api_gateway_rest_api.gateway_main.root_resource_id
   aws_api_gateway_resource_id = aws_api_gateway_resource.gateway_resource.id
 }
+module "module_delete" {
+  source = "./delete-dimention"
+  aws_api_gateway_rest_api_id = aws_api_gateway_rest_api.gateway_main.id
+  aws_api_gateway_rest_api_arn = aws_api_gateway_rest_api.gateway_main.execution_arn
+  aws_api_gateway_rest_api_root= aws_api_gateway_rest_api.gateway_main.root_resource_id
+  aws_api_gateway_resource_id = aws_api_gateway_resource.gateway_resource.id
+}
