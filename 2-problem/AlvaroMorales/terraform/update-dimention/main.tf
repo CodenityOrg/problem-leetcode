@@ -1,13 +1,14 @@
 
 
   # subir y desplegar
-  resource "aws_lambda_function" "create" {
+  resource "aws_lambda_function" "function_main" {
+    depends_on = [aws_iam_role_policy_attachment.main_role_policy_attachment] 
     function_name = "${var.project}-${var.function_name}"
     s3_bucket        = "bucket-${var.env}-dimention-app-01"  # Nombre del bucket de S3
     s3_key           = "app.zip"     # Ruta en el bucket al archivo ZIP
     source_code_hash = filebase64sha256("../app.zip")
     runtime = "nodejs16.x"
-    handler = "src/functions/create-dimention/handler.main"
+    handler = "src/functions/update-dimention/handler.main"
     role = aws_iam_role.iam_for_lambda.arn
 
     environment {
@@ -64,6 +65,7 @@
     })
   }
   resource "aws_iam_role_policy_attachment" "main_role_policy_attachment" {
+    depends_on = [aws_iam_role.iam_for_lambda,aws_iam_policy.main_policy]
     role       = aws_iam_role.iam_for_lambda.name
     policy_arn = aws_iam_policy.main_policy.arn
   }
@@ -75,21 +77,28 @@
   #   path_part = "dimention" 
   # }
 
+  # resource "aws_api_gateway_resource" "gateway_resource_id_dimention" {
+  #   rest_api_id = var.aws_api_gateway_rest_api_id
+  #   parent_id   = var.aws_api_gateway_resource_id
+  #   path_part   = "{id_dimention}"
+  # }
+
   # Crear un método HTTP GET para el recurso
-  resource "aws_api_gateway_method" "create" {
+  resource "aws_api_gateway_method" "method" {
     rest_api_id   = var.aws_api_gateway_rest_api_id
     resource_id   = var.aws_api_gateway_resource_id
-    http_method   = "POST"
+    http_method   = "PUT"
     authorization = "NONE"
   }
   # incorporando función Lambda con el método API Gateway
   resource "aws_api_gateway_integration" "lambda" {
+    depends_on = [aws_lambda_function.function_main]
     rest_api_id             = var.aws_api_gateway_rest_api_id
     resource_id             = var.aws_api_gateway_resource_id
-    http_method             = aws_api_gateway_method.create.http_method
+    http_method             = aws_api_gateway_method.method.http_method
     integration_http_method = "POST"
     type                    = "AWS"
-    uri                     = aws_lambda_function.create.invoke_arn
+    uri                     = aws_lambda_function.function_main.invoke_arn
     request_templates = {
     "application/json" = file("${path.module}/vtl/request.vtl") 
     }
@@ -98,7 +107,7 @@
     depends_on = [aws_api_gateway_integration.lambda]
     rest_api_id     = var.aws_api_gateway_rest_api_id
     resource_id     = var.aws_api_gateway_resource_id
-    http_method     = aws_api_gateway_method.create.http_method
+    http_method     = aws_api_gateway_method.method.http_method
     status_code     = "200"
     response_templates = {
       # "application/json" = file("${path.module}/response.vtl")
@@ -110,7 +119,7 @@
   resource "aws_api_gateway_method_response" "lambda_method_response" {
     rest_api_id = var.aws_api_gateway_rest_api_id
     resource_id = var.aws_api_gateway_resource_id
-    http_method = aws_api_gateway_method.create.http_method
+    http_method = aws_api_gateway_method.method.http_method
     status_code = "200"
 
     response_models = {
@@ -120,12 +129,13 @@
 
   # invocar la función Lambda
   resource "aws_lambda_permission" "api_gw" {
+    depends_on = [aws_lambda_function.function_main] 
     statement_id  = "AllowAPIGatewayInvoke"
     action        = "lambda:InvokeFunction"
-    function_name = aws_lambda_function.create.function_name
+    function_name = aws_lambda_function.function_main.function_name
     principal     = "apigateway.amazonaws.com"
 
     # El ARN del stage de API
-    source_arn = "${var.aws_api_gateway_rest_api_arn}/*/POST/dimention"
+    source_arn = "${var.aws_api_gateway_rest_api_arn}/*/PUT/dimention"
   }
 

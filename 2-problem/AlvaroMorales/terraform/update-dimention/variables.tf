@@ -24,7 +24,7 @@ variable "timeout" {
 
 variable "function_name" {
   type = string
-  default = "dimention-create-app"
+  default = "dimention-update-app"
 }
 
 variable "project" {

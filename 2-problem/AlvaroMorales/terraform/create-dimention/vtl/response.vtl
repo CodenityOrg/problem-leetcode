@@ -1,0 +1,7 @@
+#set ($bodyObj = $util.parseJson($input.body))
+#if ($bodyObj.code == "errorValidation")
+    #set($context.responseOverride.status = 400)
+#else
+    #set($context.responseOverride.status = 200)
+#end
+    $input.body
