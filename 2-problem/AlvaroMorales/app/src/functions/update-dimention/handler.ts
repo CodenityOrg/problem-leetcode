@@ -3,6 +3,7 @@ import { initContainer } from "../../common/conatiner";
 import { TYPES } from "../../common/types";
 import { UpdateDimentionRequest } from "../../infrastructure/models/dimention";
 import { DimentionService } from "../../domain/Services/create-dimention.service";
+import { dimentionUpdateSchema } from "../../common/validations/dimentionValidation";
 
 @injectable()
 export class UpdateHandler{
@@ -10,8 +11,17 @@ export class UpdateHandler{
         @inject(TYPES.DimentionService) private readonly dimentionService: DimentionService
     ){}
     async main (event:UpdateDimentionRequest){
-        console.log("UPDATEEVENET----->",event);
-        return await this.dimentionService.updateDimention(event);
+        try {
+            await dimentionUpdateSchema.validate(event);
+            console.log("UPDATEEVENET----->",event);
+            return await this.dimentionService.updateDimention(event);
+        } catch (error:any) {
+            console.log("ERROR----->",error);
+            return{
+                code:"errorValidation",
+                message: error.errors
+            }
+        }
     }
 }
 
