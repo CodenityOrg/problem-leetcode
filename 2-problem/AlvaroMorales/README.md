@@ -25,3 +25,15 @@ make down
 ```bash
 make deploy
 ```
+
+5. **Delimacion de recursos**
+```bash
+make destroy
+```
+6. **Proceso local**
+Puedes agregar mas funciones dentro de templante.yaml no olvides actualizar tus credenciales AWS e instalar SAM CLI
+```bash
+make sam.start FUNCTION=getDimention EVENT=getDimention
+
+make sam.start FUNCTION=createDimention EVENT=createDimention
+```

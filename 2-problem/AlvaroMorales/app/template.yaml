@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  getDimention:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/src/functions/get-dimention/handler.main
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      MemorySize: 256
+      Timeout: 100
+      Environment:
+        Variables:
+          DYN_CODENITY_DIMENTION : "dyn-codenity-dimention"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /dimention
+            Method: GET
+  createDimention:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/src/functions/create-dimention/handler.main
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      MemorySize: 256
+      Timeout: 100
+      Environment:
+        Variables:
+          DYN_CODENITY_DIMENTION : "dyn-codenity-dimention"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /dimention
+            Method: POST
+    
