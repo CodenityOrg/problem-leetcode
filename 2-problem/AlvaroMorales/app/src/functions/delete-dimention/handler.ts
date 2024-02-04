@@ -15,7 +15,7 @@ export class DeleteHandler{
         try {
             await dimentionDeleteSchema.validate(event);
             await this.dimentionService.deleteDimention(event.id_dimention);
-            return {message:"delete complet"}
+            return {message:"delete complete"}
         } catch (error:any) {
             console.log("ERROR----->",error);
             return{

@@ -8,7 +8,7 @@
     s3_key           = "app.zip"     # Ruta en el bucket al archivo ZIP
     source_code_hash = filebase64sha256("../app.zip")
     runtime = "nodejs16.x"
-    handler = "src/functions/get-dimention/handler.main"
+    handler = "src/functions/all-dimention/handler.main"
     role = aws_iam_role.iam_for_lambda.arn
 
     environment {
@@ -47,6 +47,7 @@
             "dynamodb:DeleteItem",
             "kms:Decrypt",
             "kms:Encrypt",
+            "dynamodb:Scan",
             "secretsmanager:GetSecretValue"
           ],
           Resource = "*"
@@ -77,16 +78,17 @@
   #   path_part = "dimention" 
   # }
 
-  resource "aws_api_gateway_resource" "gateway_resource_id_dimention" {
-    rest_api_id = var.aws_api_gateway_rest_api_id
-    parent_id   = var.aws_api_gateway_resource_id
-    path_part   = "{id_dimention}"
-  }
+  # resource "aws_api_gateway_resource" "gateway_resource_id_dimention" {
+  #   rest_api_id = var.aws_api_gateway_rest_api_id
+  #   parent_id   = var.aws_api_gateway_resource_id
+  #   path_part   = "{id_dimention}"
+  # }
 
+ 
   # Crear un método HTTP GET para el recurso
   resource "aws_api_gateway_method" "method" {
     rest_api_id   = var.aws_api_gateway_rest_api_id
-    resource_id   = aws_api_gateway_resource.gateway_resource_id_dimention.id
+    resource_id   = var.aws_api_gateway_resource_id
     http_method   = "GET"
     authorization = "NONE"
   }
@@ -94,7 +96,7 @@
   resource "aws_api_gateway_integration" "lambda" {
     depends_on = [aws_lambda_function.function_main]
     rest_api_id             = var.aws_api_gateway_rest_api_id
-    resource_id             = aws_api_gateway_resource.gateway_resource_id_dimention.id
+    resource_id             = var.aws_api_gateway_resource_id
     http_method             = aws_api_gateway_method.method.http_method
     integration_http_method = "POST"
     type                    = "AWS"
@@ -106,7 +108,7 @@
   resource "aws_api_gateway_integration_response" "lambda_response" {
     depends_on = [aws_api_gateway_integration.lambda]
     rest_api_id     = var.aws_api_gateway_rest_api_id
-    resource_id     = aws_api_gateway_resource.gateway_resource_id_dimention.id
+    resource_id     = var.aws_api_gateway_resource_id
     http_method     = aws_api_gateway_method.method.http_method
     status_code     = "200"
     response_templates = {
@@ -118,7 +120,7 @@
   # Opcional: Plantilla VTL para la respuesta del método
   resource "aws_api_gateway_method_response" "lambda_method_response" {
     rest_api_id = var.aws_api_gateway_rest_api_id
-    resource_id = aws_api_gateway_resource.gateway_resource_id_dimention.id
+    resource_id = var.aws_api_gateway_resource_id
     http_method = aws_api_gateway_method.method.http_method
     status_code = "200"
 
@@ -138,7 +140,6 @@
     rest_api_id = var.aws_api_gateway_rest_api_id
     stage_name  = "v1"
   }
-
   # invocar la función Lambda
   resource "aws_lambda_permission" "api_gw" {
     depends_on = [aws_lambda_function.function_main] 
@@ -148,6 +149,6 @@
     principal     = "apigateway.amazonaws.com"
 
     # El ARN del stage de API
-    source_arn = "${var.aws_api_gateway_rest_api_arn}/*/GET/dimention/{id_dimention}"
+    source_arn = "${var.aws_api_gateway_rest_api_arn}/*/GET/dimention"
   }
 

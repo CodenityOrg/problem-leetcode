@@ -118,6 +118,18 @@
     }
   }
 
+  resource "aws_api_gateway_deployment" "api_deployment" {
+    depends_on = [
+      aws_api_gateway_integration.lambda,
+      aws_api_gateway_method.create,
+      aws_api_gateway_integration_response.lambda_response,
+      aws_api_gateway_method_response.lambda_method_response
+    ]
+
+    rest_api_id = var.aws_api_gateway_rest_api_id
+    stage_name  = "v1"
+  }
+
   # invocar la función Lambda
   resource "aws_lambda_permission" "api_gw" {
     statement_id  = "AllowAPIGatewayInvoke"

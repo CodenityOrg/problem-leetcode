@@ -53,3 +53,11 @@ module "module_update" {
   aws_api_gateway_rest_api_root= aws_api_gateway_rest_api.gateway_main.root_resource_id
   aws_api_gateway_resource_id = aws_api_gateway_resource.gateway_resource.id
 }
+
+module "module_all" {
+  source = "./all-dimention"
+  aws_api_gateway_rest_api_id = aws_api_gateway_rest_api.gateway_main.id
+  aws_api_gateway_rest_api_arn = aws_api_gateway_rest_api.gateway_main.execution_arn
+  aws_api_gateway_rest_api_root= aws_api_gateway_rest_api.gateway_main.root_resource_id
+  aws_api_gateway_resource_id = aws_api_gateway_resource.gateway_resource.id
+}

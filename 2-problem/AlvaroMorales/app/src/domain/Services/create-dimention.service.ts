@@ -22,6 +22,9 @@ export class DimentionService{
     async updateDimention (event:UpdateDimentionRequest){
         return await this.dimentionRepository.updateDimention(event);
     }
+    async getAllDimention(){
+        return await this.dimentionRepository.getAllDimention();
+    }
 
     private buildDimention(event:DimentionRequest):Dimention{
         const newDimention:Dimention = {

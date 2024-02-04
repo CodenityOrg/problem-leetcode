@@ -14,7 +14,8 @@ export class UpdateHandler{
         try {
             await dimentionUpdateSchema.validate(event);
             console.log("UPDATEEVENET----->",event);
-            return await this.dimentionService.updateDimention(event);
+            await this.dimentionService.updateDimention(event);
+            return {message:"Update complete"}
         } catch (error:any) {
             console.log("ERROR----->",error);
             return{
