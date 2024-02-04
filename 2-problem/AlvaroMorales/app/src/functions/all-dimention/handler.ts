@@ -6,15 +6,14 @@ import { GetDimentionRequest } from "../../infrastructure/models/dimention";
 import { dimentionGetSchema } from "../../common/validations/dimentionValidation";
 
 @injectable()
-export class GetHandler{
+export class GetAllHandler{
     constructor(
         @inject(TYPES.DimentionService) private readonly dimentionService:DimentionService,
     ){}
-    async main(event:GetDimentionRequest) {
+    async main() {
         // console.log("event---->",event);
        try {
-            await dimentionGetSchema.validate(event);
-            return await this.dimentionService.getDimention(event.id_dimention);
+            return await this.dimentionService.getAllDimention();
        } catch (error:any) {
             console.log("ERROR----->",error);
             return{
@@ -25,8 +24,8 @@ export class GetHandler{
     }
 }
 
-export const main = async(event:GetDimentionRequest)=>{
+export const main = async()=>{
     const container = initContainer();
-    const getHandler = container.get<GetHandler>(TYPES.GetHandler);
-    return await getHandler.main(event);
+    const getAllHandler = container.get<GetAllHandler>(TYPES.GetAllHandler);
+    return await getAllHandler.main();
 }

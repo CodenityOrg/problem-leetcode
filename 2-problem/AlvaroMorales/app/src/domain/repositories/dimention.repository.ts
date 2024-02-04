@@ -5,4 +5,5 @@ export interface DimentionRepository {
     getDimention(source:string):Promise<Dimention>;
     updateDimention(dimention:UpdateDimentionRequest):Promise<void>;
     deleteDimention(source:string):Promise<void>;
+    getAllDimention():Promise<Dimention[]>
 }
