@@ -16,3 +16,6 @@ deploy:
 	cd terraform && terraform init && terraform apply
 	cd .. && cd ..
 	rm app.zip
+
+destroy:
+	cd terraform && terraform destroy
