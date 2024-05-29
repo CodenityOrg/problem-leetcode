@@ -1,0 +1,20 @@
+version: 3.8.0
+
+services:
+  lambda:
+    stdin_open: true
+    tty: true
+    image: ${container_name}
+    container_name: ${container_name}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        awsKey: ${aws_access_key_id}
+        awsSecret: ${aws_secret_access_key}
+        awsSessionToken: ${aws_session_token}
+    volumes:
+      - ./app/:/app/
+    ports:
+      - "4000:4000"
+      - "3972:3972"
