@@ -1,7 +1,9 @@
 # compiled output
 dist
 node_modules
-
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
 # OS
 .DS_Store
 
