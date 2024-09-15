@@ -1,3 +1,4 @@
+# con esto especificamos que vercion utilizaremos
 terraform {
   required_providers {
     aws = { source = "hashicorp/aws", version = "5.52.0" }
@@ -11,12 +12,14 @@ provider "aws" {
 
 # --- VPC ---
 
+#definimos variables locales
 
 locals {
-  azs_count = 2
-  azs_names = data.aws_availability_zones.available.names
+  azs_count = 2  #numero de zonas a utilizar
+  azs_names = data.aws_availability_zones.available.names  # lista de nombre de las zonas
 }
 
+#creamos una VPC
 resource "aws_vpc" "main" {
   cidr_block           = "10.10.0.0/16"
   enable_dns_hostnames = true
@@ -33,6 +36,20 @@ resource "aws_subnet" "public" {
   tags                    = { Name = "demo-public-${local.azs_names[count.index]}" }
 }
 
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+  tags = { Name = "demo-public-rt" }
+}
+
+resource "aws_route_table_association" "public" {
+  count          = local.azs_count
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
 # --- ECS Cluster ---
 
 resource "aws_ecs_cluster" "main" {
@@ -85,13 +102,13 @@ resource "aws_security_group" "ecs_node_sg" {
 # --- ECS Launch Template ---
 
 data "aws_ssm_parameter" "ecs_node_ami" {
-  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
+  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/arm64/recommended/image_id"
 }
 
 resource "aws_launch_template" "ecs_ec2" {
   name_prefix            = "demo-ecs-ec2-"
   image_id               = data.aws_ssm_parameter.ecs_node_ami.value
-  instance_type          = "t2.micro"
+  instance_type          = "t4g.micro"
   vpc_security_group_ids = [aws_security_group.ecs_node_sg.id]
 
   iam_instance_profile { arn = aws_iam_instance_profile.ecs_node.arn }
@@ -206,7 +223,12 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn = aws_iam_role.ecs_exec_role.arn
   network_mode       = "awsvpc"
   cpu                = 256
-  memory             = 256
+  memory             = 512
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "ARM64"
+  }
 
   container_definitions = jsonencode([{
     name         = "app",
@@ -215,7 +237,7 @@ resource "aws_ecs_task_definition" "app" {
     portMappings = [{ containerPort = 3000, hostPort = 3000 }],
 
     environment = [
-      { name = "EXAMPLE", value = "example" }
+      { name = "NODE_ENV", value = "production" }
     ]
 
     logConfiguration = {
@@ -226,6 +248,7 @@ resource "aws_ecs_task_definition" "app" {
         "awslogs-stream-prefix" = "app"
       }
     },
+    command = ["yarn", "start:prod"]
   }])
 }
 
@@ -276,13 +299,13 @@ resource "aws_ecs_service" "app" {
   lifecycle {
     ignore_changes = [desired_count]
   }
-  depends_on = [aws_lb_target_group.app]
 
   load_balancer {
     target_group_arn = aws_lb_target_group.app.arn
     container_name   = "app"
     container_port   = 3000
   }
+  depends_on = [aws_lb_target_group.app, aws_lb_listener.http, aws_iam_role_policy_attachment.ecs_exec_role_policy]
 }
 
 ##no terinado de aqui pa delante

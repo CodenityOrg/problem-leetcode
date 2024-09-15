@@ -8,7 +8,7 @@ IMAGE_TAG="latest"
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 # Construir la imagen de Docker
-docker build -t ${REPOSITORY_NAME}:${IMAGE_TAG} .
+docker build --no-cache -t ${REPOSITORY_NAME}:${IMAGE_TAG} .
 
 # Crear el repositorio en ECR si no existe
 aws ecr describe-repositories --repository-names ${REPOSITORY_NAME} || aws ecr create-repository --repository-name ${REPOSITORY_NAME}
